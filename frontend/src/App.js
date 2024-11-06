@@ -9,9 +9,11 @@ function App() {
     fetchFiles();
   }, []);
 
+  const baseUrl = `http://${window.location.hostname}:3838`;
+
   const fetchFiles = async () => {
     try {
-      const response = await axios.get("http://localhost:3838/files");
+      const response = await axios.get(`${baseUrl}/files`);
       setFiles(response.data);
     } catch (error) {
       console.error("Error fetching files:", error);
@@ -26,7 +28,7 @@ function App() {
     const formData = new FormData();
     formData.append("file", file);
     try {
-      await axios.post("http://localhost:3838/upload", formData, {
+      await axios.post(`${baseUrl}/upload`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       fetchFiles();
@@ -37,12 +39,9 @@ function App() {
 
   const downloadFile = async (filename) => {
     try {
-      const response = await axios.get(
-        `http://localhost:3838/download/${filename}`,
-        {
-          responseType: "blob",
-        }
-      );
+      const response = await axios.get(`${baseUrl}/download/${filename}`, {
+        responseType: "blob",
+      });
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
       link.href = url;
